@@ -32,23 +32,12 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v3
 
-            - name: Log in to DockerHub
-              uses: docker/login-action@v2
-              with:
-                  username: ${{ secrets.USER }}
-                  password: ${{ secrets.PWD }}
-
             - name: Build Docker image
-              run: docker build -t srivisnu/portfolio:${{ github.sha }} -t srivisnu/portfolio:latest .
-
-            - name: Push Docker image
-              run: |
-                docker push srivisnu/portfolio:${{ github.sha }}
-                docker push srivisnu/portfolio:latest
+              run: docker build -t portfolio:${{ github.sha }} -t portfolio:latest .
 
     deploy:
         runs-on: ubuntu-latest
-        needs: dockerbuild # Wait
+        needs: dockerbuild # Wait for dockerbuild
 
         steps:
             - name: Deploy to the server
@@ -58,7 +47,12 @@ jobs:
                 username: ${{ secrets.SERVER_USER }}
                 key: ${{ secrets.SERVER_PRIVATE_KEY }}
                 script: |
+                    # Stop and remove any existing container
                     docker stop portfolio || true
                     docker rm portfolio || true
-                    docker pull srivisnu/portfolio:latest
-                    docker run -d --name portfolio --restart always -p 8081:8081 srivisnu/portfolio:latest
+                    
+                    # Copy the Docker image from the GitHub runner to the server
+                    docker save portfolio:latest | ssh -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.HOST }} "docker load"
+                    
+                    # Run the container
+                    docker run -d --name portfolio --restart always -p 8081:8081 portfolio:latest
