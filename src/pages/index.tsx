@@ -232,7 +232,7 @@ export default function Home() {
                       title="Professional Background"
                       description={profileOverview}
                       icon="/badge.svg"
-                      additionalComps={[<LocationInfo key="additional-comp" location="Based in Harrison, New Jersey, USA" />]}
+                      additionalComps={[<LocationInfo key="additional-comps" location="Based in Harrison, New Jersey, USA" />]}
                     />
                   </div>
                 </div>
