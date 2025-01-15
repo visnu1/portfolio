@@ -1,67 +1,106 @@
 name: Portfolio CI/CD
 
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 jobs:
-    projectbuild:
-        runs-on: ubuntu-latest
+  projectbuild:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v3
+    steps:
+      # Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v3
-              with:
-                  node-version: '18'
+      # Set up Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-            - name: Install dependencies
-              run: npm ci
+      # Install project dependencies
+      - name: Install dependencies
+        run: npm ci
 
-            - name: Build project
-              run: npm run build
+      # Build the project
+      - name: Build project
+        run: npm run build
 
-            - name: Upload build artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                name: build-folder
-                path: ./out # we upload all files in the out dir to github temp storage
+      # Upload build artifacts (from the `out` directory)
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-folder
+          path: ./out # Ensure this is the correct build directory for your Next.js app
 
-    dockerbuild-and-deploy:
-        runs-on: ubuntu-latest
-        needs: projectbuild # Wait for projectbuild
+  dockerbuild:
+    runs-on: ubuntu-latest
+    needs: projectbuild # Ensure `projectbuild` completes first
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v3
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-            - name: Download build artifacts
-              uses: actions/download-artifact@v4
-              with:
-                name: build-folder
-                path: ./out  #we download all the build files into the "out" dir 
+      # Download the build artifacts from the previous job
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-folder
+          path: ./out
 
-                # Note: There is also original files as we did "Checkout out" step, therefore Dockerfile is available
+      # Build the Docker image (assumes the Dockerfile exists in the repo root)
+      - name: Build Docker image
+        run: docker build -t portfolio .
 
-            - name: Build Docker image
-              run: docker build -t portfolio:${{ github.sha }} -t portfolio:latest .
+      # Save the Docker image as a tar file
+      - name: Save Docker image
+        run: docker save portfolio -o portfolio.tar
 
-            - name: Deploy to the server
-              uses: appleboy/ssh-action@v1.2.0
-              with:
-                host: ${{ secrets.HOST }}
-                username: ${{ secrets.SERVER_USER }}
-                key: ${{ secrets.SERVER_PRIVATE_KEY }}
-                script: |
-                    # Stop and remove any existing container
-                    docker stop portfolio || true
-                    docker rm portfolio || true
-                    
-                    # Copy the Docker image from the GitHub runner to the server
-                    docker save portfolio:latest | ssh -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.HOST }} "docker load"
-                    
-                    # Run the container
-                    docker run -d --name portfolio --restart always -p 8081:8081 portfolio:latest
+      # Upload the Docker image tar file for the next job
+      - name: Upload Docker image
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-image
+          path: portfolio.tar
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: dockerbuild # Ensure `dockerbuild` completes first
+
+    steps:
+      # Download the Docker image tar file
+      - name: Download Docker image
+        uses: actions/download-artifact@v4
+        with:
+          name: portfolio-image
+
+      # Copy the Docker image to the EC2 instance
+      - name: Copy Docker image to EC2
+        uses: appleboy/scp-action@v0.2.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_PRIVATE_KEY }}
+          source: portfolio.tar
+          target: /home/${{ secrets.SERVER_USER }}/portfolio.tar
+
+      # SSH into the EC2 instance and deploy the container
+      - name: Deploy to the server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_PRIVATE_KEY }}
+          script: |
+            # Load the Docker image from the tar file
+            docker load -i /home/${{ secrets.SERVER_USER }}/portfolio.tar
+
+            # Stop and remove any existing container with the same name
+            docker stop portfolio || true
+            docker rm portfolio || true
+            
+            # Run the Docker container
+            docker run -d --name portfolio --restart always -p 8081:8081 portfolio:latest
