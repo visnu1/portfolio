@@ -45,12 +45,7 @@ jobs:
                 path: ./out          # Extract the artifact into the 'out' directory
 
             - name: Build Docker image
-              run: |
-                echo "Contents of the current directory before building Docker image:"
-                ls -a
-                echo "What's inside out"
-                ls out/ -a
-                docker build -t portfolio:${{ github.sha }} -t portfolio:latest .
+              run: docker build -t portfolio:${{ github.sha }} -t portfolio:latest .
 
             - name: Clean up build folder
               run: |
