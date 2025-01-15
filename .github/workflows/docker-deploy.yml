@@ -28,9 +28,9 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                 name: build-folder
-                path: ./out
+                path: ./out # we upload all files in the out dir to github temp storage
 
-    dockerbuild:
+    dockerbuild-and-deploy:
         runs-on: ubuntu-latest
         needs: projectbuild # Wait for projectbuild
 
@@ -41,23 +41,14 @@ jobs:
             - name: Download build artifacts
               uses: actions/download-artifact@v4
               with:
-                name: build-folder  # This matches the name used in upload-artifact
-                path: ./out          # Extract the artifact into the 'out' directory
+                name: build-folder
+                path: ./out  #we download all the build files into the "out" dir 
+
+                # Note: There is also original files as we did "Checkout out" step, therefore Dockerfile is available
 
             - name: Build Docker image
               run: docker build -t portfolio:${{ github.sha }} -t portfolio:latest .
 
-            - name: Clean up build folder
-              run: |
-                # Remove the build folder to clean up after Docker build
-                rm -rf ./out
-
-
-    deploy:
-        runs-on: ubuntu-latest
-        needs: dockerbuild # Wait for dockerbuild
-
-        steps:
             - name: Deploy to the server
               uses: appleboy/ssh-action@v1.2.0
               with:
