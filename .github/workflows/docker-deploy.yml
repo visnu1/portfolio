@@ -85,7 +85,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           source: portfolio.tar
-          target: /home/${{ secrets.SERVER_USER }}/portfolio.tar
+          target: /home/${{ secrets.SERVER_USER }}
 
       # SSH into the EC2 instance and deploy the container
       - name: Deploy to the server
@@ -98,9 +98,13 @@ jobs:
             # Load the Docker image from the tar file
             docker load -i /home/${{ secrets.SERVER_USER }}/portfolio.tar
 
+            rm -rf -i /home/${{ secrets.SERVER_USER }}/portfolio.tar
+
             # Stop and remove any existing container with the same name
             docker stop portfolio || true
             docker rm portfolio || true
+
+            # Add code to remove image, or it may pile up
             
             # Run the Docker container
             docker run -d --name portfolio --restart always -p 8081:8081 portfolio:latest
