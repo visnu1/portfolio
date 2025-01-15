@@ -25,7 +25,7 @@ jobs:
               run: npm run build
 
             - name: Upload build artifacts
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                 name: build-folder
                 path: ./out
@@ -39,22 +39,24 @@ jobs:
               uses: actions/checkout@v3
 
             - name: Download build artifacts
-              uses: actions/download-artifact@v3
+              uses: actions/download-artifact@v4
               with:
-                name: build-folder
+                name: build-folder  # This matches the name used in upload-artifact
+                path: ./out          # Extract the artifact into the 'out' directory
 
             - name: Build Docker image
               run: |
-                # Ensure the downloaded artifact is in the expected location
-                echo "Contents of the current directory before moving build-folder:"
-                ls -alh
-                mv build-folder ./out  # Move the downloaded artifact to the expected location
+                echo "Contents of the current directory before building Docker image:"
+                ls -a
+                echo "What's inside out"
+                ls out/ -a
                 docker build -t portfolio:${{ github.sha }} -t portfolio:latest .
 
             - name: Clean up build folder
               run: |
                 # Remove the build folder to clean up after Docker build
                 rm -rf ./out
+
 
     deploy:
         runs-on: ubuntu-latest
