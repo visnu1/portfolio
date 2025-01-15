@@ -46,7 +46,9 @@ jobs:
             - name: Build Docker image
               run: |
                 # Ensure the downloaded artifact is in the expected location
-                mv build-folder ./out
+                echo "Contents of the current directory before moving build-folder:"
+                ls -alh
+                mv build-folder ./out  # Move the downloaded artifact to the expected location
                 docker build -t portfolio:${{ github.sha }} -t portfolio:latest .
 
             - name: Clean up build folder
@@ -56,7 +58,7 @@ jobs:
 
     deploy:
         runs-on: ubuntu-latest
-        needs: dockerbuild # Wait
+        needs: dockerbuild # Wait for dockerbuild
 
         steps:
             - name: Deploy to the server
@@ -66,11 +68,12 @@ jobs:
                 username: ${{ secrets.SERVER_USER }}
                 key: ${{ secrets.SERVER_PRIVATE_KEY }}
                 script: |
-                    # remove running container
+                    # Stop and remove any existing container
                     docker stop portfolio || true
                     docker rm portfolio || true
                     
-                    # Copy image from gitHub runner to the server
+                    # Copy the Docker image from the GitHub runner to the server
                     docker save portfolio:latest | ssh -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.HOST }} "docker load"
                     
+                    # Run the container
                     docker run -d --name portfolio --restart always -p 8081:8081 portfolio:latest
