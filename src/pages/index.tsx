@@ -366,21 +366,24 @@ export default function Home() {
                 <div className={`${styles.workCtn} d-flex flex-column`}>
                   <div className={`${styles.workItemWrapper} ${styles.credentialItemsCtn}`}>
                     {credentials.map((credential, index) => (
-                      <div key={index} className={`${styles.workInfo} d-flex flex-column`}>
-                        <div className="d-flex flex-column f-gap-2">
-                          <div className={`${styles.workTitle} f-gap-1 d-flex flex-column`}>
-                            <div>
-                              <h3>{credential.name}</h3>
+                      <>
+                        <div key={index} className={`${styles.workInfo} d-flex flex-column`}>
+                          <div className="d-flex flex-column f-gap-2">
+                            <div className={`${styles.workTitle} f-gap-1 d-flex flex-column`}>
+                              <div>
+                                <h3>{credential.name}</h3>
+                              </div>
+                              <div>
+                                <p>{credential.companyIssued} - Issued {credential.dateIssued}</p>
+                              </div>
                             </div>
                             <div>
-                              <p>{credential.companyIssued} - Issued {credential.dateIssued}</p>
+                              <Button name="Show Credentials" target="_blank" icon="/north_east.svg" alt="link" href={credential.source} className="btn-max-width" />
                             </div>
                           </div>
-                          <div>
-                            <Button name="Show Credentials" target="_blank" icon="/north_east.svg" alt="link" href={credential.source} className="btn-max-width" />
-                          </div>
+                          {index < credentials.length - 1 && <hr/>}
                         </div>
-                      </div>
+                      </>
                     ))}
                   </div>
                 </div>
@@ -450,7 +453,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div>
-                    <div className="d-flex align-center f-gap-3">
+                    <div className="d-flex align-center f-gap-2">
                       <a href="https://linkedin.com/in/srivisnu" target="_blank">
                         <Icon path="./linkedin.svg" size={30}></Icon>
                       </a>

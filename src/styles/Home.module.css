@@ -27,12 +27,12 @@
 }
 
 .main {
-  max-width: 768px;
+  max-width: 680px;
   width: 100%;
 }
 
 .mainCtn {
-  padding: 0 24px
+  padding: 0 5px
 }
 
 .sec1 {
@@ -86,7 +86,7 @@
   overflow: hidden;
 }
 
-.profileImg{
+.profileImg {
   width: 100%;
   height: 100%;
   border-radius: 16px;
@@ -133,6 +133,10 @@
 .workInfo {
   gap: 16px;
   flex: 1;
+}
+
+.workInfo>hr {
+  display: none;
 }
 
 .workTitle {
@@ -188,6 +192,59 @@
   padding: 40px 24px;
 }
 
+
+@media (max-width: 1024px) {
+
+  /* Tablets and smaller desktops */
+  .name {
+    font-size: 40px;
+  }
+
+  .subheading {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  /* Mobile screens */
+  .name {
+    font-size: 32px;
+  }
+
+  .subheading {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  /* Very small screens (portrait mobile) */
+  .name {
+    font-size: 28px;
+  }
+
+  .subheading {
+    font-size: 14px;
+  }
+
+  .credentialItemsCtn {
+    grid-template-columns: 1fr;
+    column-gap: 16px;
+    row-gap: 24px;
+  }
+
+  .workCtn{
+    padding: 24px;
+  }
+
+  .workInfo>hr {
+    display: block;
+  }
+
+}
+
+
 /* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
   a.primary:hover {
@@ -198,22 +255,5 @@
   a.secondary:hover {
     background: var(--button-secondary-hover);
     border-color: transparent;
-  }
-}
-
-@media (max-width: 600px) {
-  .page {
-    padding: 32px;
-    padding-bottom: 80px;
-  }
-
-  .main {
-    align-items: center;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
   }
 }
