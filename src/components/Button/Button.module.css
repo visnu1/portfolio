@@ -1,9 +1,9 @@
 .btn {
-    padding: 8px 14px;
+    padding: 8px 12px;
     justify-content: space-around;
-    background-color: white;
+    background-color: var(--background);
     border-radius: 12px;
-    color: black;
+    color: var(--pitchBlack);
     font-weight: 700;
     cursor: pointer;
     border: 1px solid silver;

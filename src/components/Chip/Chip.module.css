@@ -5,12 +5,12 @@
 .iconWrapper {
     background-color: rgb(255, 255, 255);
     border: 1px solid var(--light-silver);
-    border-radius: 8px;
+    border-radius: 16px;
     opacity: 1;
     justify-content: flex-start;
     flex-shrink: 0;
-    padding: 6px 10px;
-    min-width: 80px;
+    padding: 4px 8px;
+    min-width: 65px;
 }
 
 .imgWrapper {

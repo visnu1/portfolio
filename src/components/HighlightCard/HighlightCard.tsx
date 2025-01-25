@@ -25,8 +25,8 @@ const HighlightCard: React.FC<HighlightCardProps> = ({
                 </div>
             </div>
 
-            <div className={`${styles.cardBody} d-flex flex-column`}>
-                <div className={`${styles.cardBodyWrapper} d-flex flex-column`}>
+            <div className="d-flex flex-column f-gap-3">
+                <div className="d-flex flex-column f-gap-2">
                     <div>
                         <h2>{title}</h2>
                     </div>

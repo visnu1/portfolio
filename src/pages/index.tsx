@@ -205,7 +205,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div>
+              <div className="mb-6">
                 <div className="d-flex">
                   <div className="m" style={{ width: "150px", margin: "0 8px" }}>
                     <Button name="Send Email" icon="/mail.svg" href="mailto:k0rj32ra5@mozmail.com" alt="mail" />
@@ -215,14 +215,27 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+              <div>
+                <div className="d-flex align-center f-gap-2">
+                  <a href="https://linkedin.com/in/srivisnu" target="_blank">
+                    <Icon path="./linkedin.svg" size={25}></Icon>
+                  </a>
+                  <a href="https://github.com/visnu1" target="_blank">
+                    <Icon path="./github.svg" size={25}></Icon>
+                  </a>
+                  <a href="https://instagram.com/sri_visnu_" target="_blank">
+                    <Icon path="./instagram.svg" size={25}></Icon>
+                  </a>
+                </div>
+              </div>
             </section>
 
-            <div className={`d-flex flex-column`} style={{ gap: "20px" }}>
+            <div className="d-flex flex-column f-gap-3">
 
               {/* Profile */}
-              <section id="profile" className={`d-flex`} style={{ gap: "10px" }}>
-                <div>
-                  <div className={styles.profileCtn}>
+              <section id="profile" className={`${styles.profileSec} d-flex f-gap-1`}>
+                <div className={styles.profileCtn}>
+                  <div className={styles.profile}>
                     <Image className={styles.profileImg} src="/my-photo.jpg" alt="profile" width={100} height={100} unoptimized />
                   </div>
                 </div>
@@ -252,7 +265,7 @@ export default function Home() {
                   {workExperience.map((work, index) => (
                     <>
                       <div key={index} className={`${styles.workItemWrapper}`}>
-                        <div className={`${styles.workItemctn} d-flex`}>
+                        <div className={`d-flex f-gap-3 w-100`}>
                           <div>
                             <div className={`${styles.bullet}`}></div>
                           </div>
@@ -381,7 +394,7 @@ export default function Home() {
                               <Button name="Show Credentials" target="_blank" icon="/north_east.svg" alt="link" href={credential.source} className="btn-max-width" />
                             </div>
                           </div>
-                          {index < credentials.length - 1 && <hr/>}
+                          {index < credentials.length - 1 && <hr />}
                         </div>
                       </>
                     ))}
@@ -434,7 +447,7 @@ export default function Home() {
                       />
                     </div>
                     <div className={styles.contactFormCtn}>
-                      <form action="" className="d-flex flex-column" style={{ gap: "25px" }}>
+                      <form action="" className="d-flex flex-column f-gap-3">
                         <div style={{ display: "contents" }}>
                           <div>
                             <input placeholder="Full Name" name="fullName" type="text" />

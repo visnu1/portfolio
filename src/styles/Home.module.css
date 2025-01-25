@@ -62,17 +62,13 @@
 
 .name {
   font-size: 48px;
-  line-height: 57px;
-  color: rgb(29, 29, 38);
-  font-weight: 500;
-  letter-spacing: -1.44px;
   text-align: center;
 }
 
 
 .subheading {
   display: block;
-  color: rgb(119, 119, 125);
+  color: var(--overviewDesc);
   font-size: 20px;
   font-weight: 500;
   letter-spacing: -0.36px;
@@ -80,16 +76,16 @@
   text-align: center;
 }
 
-.profileCtn {
+.profile {
   width: 260px;
   height: 100%;
+  border-radius: 16px;
   overflow: hidden;
 }
 
 .profileImg {
   width: 100%;
   height: 100%;
-  border-radius: 16px;
   object-fit: cover;
   object-position: center;
   filter: brightness(1.1) contrast(0.7);
@@ -100,13 +96,9 @@
   gap: 24px;
   position: relative;
   border: 1px solid var(--light-silver);
+  background-color: var(--background);
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
-}
-
-.workItemctn {
-  gap: 24px;
-  width: 100%;
 }
 
 .bullet {
@@ -215,6 +207,25 @@
   .subheading {
     font-size: 16px;
   }
+
+  .profileSec {
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .profileCtn {
+    top: 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .profile {
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
 }
 
 @media (max-width: 480px) {
@@ -234,7 +245,7 @@
     row-gap: 24px;
   }
 
-  .workCtn{
+  .workCtn {
     padding: 24px;
   }
 

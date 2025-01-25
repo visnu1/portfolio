@@ -1,17 +1,17 @@
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-  --light-silver: #e4e4e4;
-  --overViewTitle: rgb(29, 29, 38);
+  --pitchBlack: #000000;
+  --light-silver: #ececec;
+  --overViewTitle: #1d1d26;
   --overviewDesc: #58585c;
-  --inputTempColor: oklch(0.511 0.262 276.966);
   --different-border: #b5ede4;
+  --headerColor: #1f1f1f;
 }
 
 /* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #ededed;
+    --pitchBlack: #ededed;
   }
 } */
 
@@ -23,7 +23,7 @@ body {
 }
 
 body {
-  color: var(--foreground);
+  color: var(--pitchBlack);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -43,23 +43,33 @@ a {
   text-decoration: none;
 }
 
+h1,
 h2,
 h3 {
-  color: rgb(29, 29, 38);
+  color: var(--headerColor);
   font-weight: 500;
   font-family: var(--font-inter);
+  hyphens: auto;
+  word-break: break-word;
+  word-wrap: break-word;
+  flex-grow: 0;
+  flex-shrink: 0;
+  letter-spacing: 0rem;
+}
+
+h1 {
+  font-size: 2rem;
+  line-height: 1.25;
 }
 
 h2 {
-  font-size: 21px;
-  letter-spacing: -0.63px;
-  line-height: 25.2px;
+  font-size: 1.375rem;
+  line-height: 1.5;
 }
 
 h3 {
-  font-size: 16px;
-  letter-spacing: -0.48px;
-  line-height: 19.2px;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 hr {
@@ -213,6 +223,7 @@ hr {
 .card-border {
   border: 1px solid var(--light-silver);
   border-radius: 16px;
+  overflow: hidden;
 }
 
 .border-top-style {
@@ -220,6 +231,7 @@ hr {
   border-top-right-radius: 16px;
   border: 1px solid var(--light-silver);
   border-bottom: none;
+  overflow: hidden;
 }
 
 .border-bottom-style {
@@ -245,6 +257,8 @@ textarea {
   padding: 12px 18px;
   width: 100%;
   font-weight: 500;
+  color: var(--pitchBlack);
+  outline: none;
 }
 
 textarea {
