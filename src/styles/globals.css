@@ -6,6 +6,8 @@
   --overviewDesc: #58585c;
   --different-border: #b5ede4;
   --headerColor: #1f1f1f;
+  --rg-gradient-angle: 96deg;
+  --rg-gradient-a: linear-gradient(var(--rg-gradient-angle, 96deg), #fef571 0%, #aeffa8 29.94%, #8fffce 66.98%, #99f7ff 100%);
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -14,6 +16,12 @@
     --pitchBlack: #ededed;
   }
 } */
+
+/* Shades Collection */
+.shades {
+  background-image: var(--rg-gradient-a, linear-gradient(120deg, #f8c7ff 20.08%, #d2ccff 75.81%));
+}
+
 
 html,
 body {
