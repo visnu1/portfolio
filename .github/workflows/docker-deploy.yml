@@ -32,7 +32,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-folder
+          name: build_artifacts
           path: ./out # Ensure this is the correct build directory for your Next.js app
 
   dockerbuild:
@@ -48,7 +48,7 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: build-folder
+          name: build_artifacts
           path: ./out
 
       # Build the Docker image (assumes the Dockerfile exists in the repo root)
@@ -63,7 +63,7 @@ jobs:
       - name: Upload Docker image
         uses: actions/upload-artifact@v4
         with:
-          name: portfolio-image
+          name: portfolio_image
           path: portfolio.tar
 
   deploy:
@@ -75,7 +75,7 @@ jobs:
       - name: Download Docker image
         uses: actions/download-artifact@v4
         with:
-          name: portfolio-image
+          name: portfolio_image
 
       # Copy the Docker image to the EC2 instance
       - name: Copy Docker image to EC2
