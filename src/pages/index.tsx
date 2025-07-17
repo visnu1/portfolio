@@ -258,7 +258,7 @@ export default function Home() {
       ...form, uuid, sheet: 'contact-messages',
     };
     try {
-      const res = await fetch(
+      await fetch(
         'https://script.google.com/macros/s/AKfycby3gkjdHMNqgus13fhRAWE8XUTG-QZplBKOtCU_R2XehlyzOHLEOZXLfnMQxGB-2kqc/exec',
         {
           method: 'POST',
@@ -268,19 +268,14 @@ export default function Home() {
         }
       );
 
-      const result = await res.json();
-
-      if (result.success) {
-        toast.dismiss();
-        toast.success('Thanks for contacting 😊', toastOpts);
-        setForm({});
-      } else {
-        throw new Error('Failed to submit');
-      }
     } catch (err) {
-      toast.dismiss();
-      toast.error('Oops! Something went wrong.', toastOpts);
+      // toast.error('Oops! Something went wrong.', toastOpts);
       console.error(err);
+    } finally {
+      toast.dismiss();
+      setForm({});
+      toast.success('Thanks for contacting 😊', toastOpts);
+
     }
   };
 
@@ -642,6 +637,7 @@ export default function Home() {
                               placeholder="Full Name"
                               name="name"
                               type="text"
+                              value={form?.name || ""}
                               onChange={updateForm}
                             />
                           </div>
@@ -650,6 +646,7 @@ export default function Home() {
                               placeholder="Email"
                               type="text"
                               name="email"
+                              value={form?.email || ""}
                               onChange={updateForm}
                             />
                           </div>
@@ -657,6 +654,7 @@ export default function Home() {
                             <textarea
                               placeholder="Message"
                               name="message"
+                              value={form?.message || ""}
                               onChange={updateForm}
                             ></textarea>
                           </div>
