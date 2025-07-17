@@ -9,6 +9,7 @@ interface ButtonProps {
     className?: string;
     compStyles?: React.CSSProperties;
     target?: HTMLAnchorElement["target"];
+    click?: any
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -18,7 +19,8 @@ export const Button: React.FC<ButtonProps> = ({
     href,
     target = "_self",
     className = "",
-    compStyles
+    compStyles,
+    click
 }) => {
     const shouldAddTarget = href !== undefined;
 
@@ -30,6 +32,7 @@ export const Button: React.FC<ButtonProps> = ({
             style={compStyles}
             target={shouldAddTarget ? target : undefined}
             aria-label={name}
+            onClick={click}
         >
             {icon && (
                 <div className={`${styles.iconctn} mr-1`}>

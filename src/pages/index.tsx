@@ -12,7 +12,15 @@ import LocationInfo from "@/components/LocationInfo/LocationInfo";
 import { Rating } from "@/components/Rating/Rating";
 import { Icon } from "@/components/Icon/Icon";
 import Image from "next/image";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import toast, { Toaster, ToastOptions } from 'react-hot-toast';
+
+
+type ContactForm = {
+  name?: string
+  email?: string,
+  message?: string,
+}
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,7 +32,7 @@ const profileOverview = "I'm a seasoned Software Developer & Engineer dropping f
 
 const skills = {
   "Programming Languages": ["JavaScript (ES6+)", "TypeScript", "Python", "PHP", "Java", "C++"],
-  "Frameworks & Libraries": ["React.js", "Angular", "Node.js", "Express.js", "Laravel", "Flask"],
+  "Frameworks & Libraries": ["React.js", "Angular", "Node.js", "Spring Boot", "Laravel", "Flask"],
   "Databases": ["MySQL", "PostgreSQL", "MongoDB", "DynamoDB", "Redis"],
   "Cloud Platforms": ["AWS", "Firebase"],
   "DevOps & CI/CD": ["Docker", "Jenkins", "GitHub Actions"],
@@ -93,16 +101,16 @@ const workExperience = [
   {
     title: "Software Developer & Engineer",
     company: "Zibtek",
-    duration: "Dec 2019 - Aug 2023",
+    duration: "Jul 2019 - Aug 2023",
     location: "Bengaluru, Karnataka, India",
-    description: "I dove headfirst into the startup grind, showing major hustle on a bunch of projects—both our own stuff and client work. This gave me a crazy diverse skillset and leveled up my problem-solving game. I was all about collaborating with different teams, contributing to and learning from Agile/Scrum. Basically, I was a project lead pro, flexing my project management skills. On top of that, I was designing architecture, doing code reviews, and building hybrid microservices using cloud tools. This meant I was tight with the DevOps team, sometimes even building, debugging, and fixing code live in production. Startup life could be intense, and mentorship wasn't always a thing, but that just made me a master of DIY learning—heavy on the research, docs, and trial and error, which seriously boosted my self-reliance.",
+    description: "I dove headfirst into the startup grind, showing major hustle on a bunch of projects both our own stuff and client work. This gave me a crazy diverse skillset and leveled up my problem-solving game. I was all about collaborating with different teams, contributing to and learning from Agile/Scrum. Basically, I was a project lead pro, flexing my project management skills. On top of that, I was designing architecture, doing code reviews, and building hybrid microservices using cloud tools. This meant I was tight with the DevOps team, sometimes even building, debugging, and fixing code live in production. Startup life could be intense, and mentorship wasn't always a thing, but that just made me a master of DIY learning—heavy on the research, docs, and trial and error, which seriously boosted my self-reliance.",
   },
   {
-    title: "Fellowship Software Developer",
+    title: "Software Developer",
     company: "BridgeLabz",
-    duration: "Jan 2019 - Dec 2019",
+    duration: "Sep 2018 - Jun 2019",
     location: "Mumbai, Maharastra, India",
-    description: "This was a total career twist. It had that full-on coding bootcamp vibe – fast-paced and jam-packed with hands-on projects that seriously leveled up my dev game. I was deep-diving into code, sharpening my logic, and getting hands-on with basic data structures using Java and TypeScript. I even built some cool stuff, like chat and note-taking apps, using JavaScript, Node.js, AngularJS, Core Java, and the MERN stack. I also got my hands dirty installing libraries, testing out new tools, and integrating third-party APIs like Stripe and Twilio – super fun stuff. The mentorship, with a focus on teamwork, communication, and getting to the bottom of problems. I was constantly bouncing ideas off tech leads and project managers, hitting up product docs and online resources to cream on solutions. This whole experience was the foundation stone for my journey into full-stack development and modern engineering."
+    description: "This was a total career twist. It had that full-on coding bootcamp vibe – fast-paced and jam-packed with hands-on projects that seriously leveled up my dev game. I was deep-diving into code, sharpening my logic, and getting hands-on with basic data structures using Java and TypeScript. I even built some cool stuff, like chat and note-taking apps, using JavaScript, Node.js, AngularJS, Core Java, and the MERN stack. I also got my hands dirty installing libraries, testing out new tools, and integrating third-party APIs like Stripe and Twilio, super fun stuff. The mentorship, with a focus on teamwork, communication, and getting to the bottom of problems. I was constantly bouncing ideas off tech leads and project managers, hitting up product docs and online resources to cream on solutions. This whole experience was the foundation stone for my journey into full-stack development and modern engineering."
   }
 ]
 
@@ -159,6 +167,13 @@ const credentials = [
 
 
 export default function Home() {
+  const [form, setForm] = useState<ContactForm>({})
+
+  const toastOpts: Partial<ToastOptions> = {
+    duration: 4000,
+    position: 'bottom-right',
+  }
+
   useEffect(() => {
     const sections = document.querySelectorAll("section");
 
@@ -180,8 +195,98 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
+
+  useEffect(() => {
+    const uuid = localStorage.getItem("visitorUUID") || crypto.randomUUID();
+    localStorage.setItem("visitorUUID", uuid);
+
+    const visited = localStorage.getItem("visitedMeta");
+
+    if (!visited) {
+      const fetchAndSendMetadata = async () => {
+        try {
+          const geo = await fetch("https://ipapi.co/json").then(res => res.json());
+
+          const metaPayload = {
+            uuid,
+            sheet: "user-meta-details",
+            ip: geo.ip,
+            city: geo.city,
+            region: geo.region,
+            country: geo.country_name,
+            postal: geo.postal,
+            latitude: geo.latitude,
+            longitude: geo.longitude,
+            userAgent: navigator.userAgent,
+            screenResolution: `${window.screen.width}x${window.screen.height}`,
+          };
+
+          await fetch('https://script.google.com/macros/s/AKfycby3gkjdHMNqgus13fhRAWE8XUTG-QZplBKOtCU_R2XehlyzOHLEOZXLfnMQxGB-2kqc/exec', {
+            method: "POST",
+            // headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(metaPayload),
+          });
+
+          localStorage.setItem("visitedMeta", "true");
+        } catch (err) {
+          console.error("Meta data failed to send", err);
+        }
+      };
+
+      fetchAndSendMetadata();
+    }
+  }, []);
+
+
+  const updateForm = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setForm(form => ({ ...form, [name]: value }));
+  };
+
+  const contactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!(form.name && form.email && form.message)) {
+      toast.error('Please, fill all the fields. Thanks! ☺️🙏🏻', toastOpts);
+      return;
+    }
+
+    const uuid = localStorage.getItem("visitorUUID");
+    toast.loading('Saving...', toastOpts);
+
+    const payload = {
+      ...form, uuid, sheet: 'contact-messages',
+    };
+    // debugger
+    try {
+      const res = await fetch(
+        'https://script.google.com/macros/s/AKfycby3gkjdHMNqgus13fhRAWE8XUTG-QZplBKOtCU_R2XehlyzOHLEOZXLfnMQxGB-2kqc/exec',
+        {
+          method: 'POST',
+          // headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const result = await res.json();
+
+      if (result.success) {
+        toast.dismiss();
+        toast.success('Thanks for contacting 😊', toastOpts);
+        setForm({});
+      } else {
+        throw new Error('Failed to submit');
+      }
+    } catch (err) {
+      toast.dismiss();
+      toast.error('Oops! Something went wrong.', toastOpts);
+      console.error(err);
+    }
+  };
+
   return (
     <>
+      <Toaster />
       <Head>
         <title>Vishnu Sri Ranjan - Portfolio</title>
         <meta
@@ -192,7 +297,7 @@ export default function Home() {
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
         {/*  Open Graph Tags */}
-        <meta property="og:title" content="Vishnu Sri Ranjan | Software Developer & Engineer Portfolio"/>
+        <meta property="og:title" content="Vishnu Sri Ranjan | Software Developer & Engineer Portfolio" />
         <meta
           property="og:description"
           content="Explore the portfolio of Vishnu Sri Ranjan, a passionate Software Developer & Engineer. Check out my projects and get in touch!"
@@ -204,8 +309,8 @@ export default function Home() {
         <meta property="og:locale" content="en_US" />
 
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:title" content="Vishnu Sri Ranjan | Software Developer & Engineer Portfolio"/>
-        <meta name="twitter:description" content="Explore the portfolio of Vishnu Sri Ranjan, a passionate Software Developer & Engineer. Check out my projects and get in touch!"/>
+        <meta name="twitter:title" content="Vishnu Sri Ranjan | Software Developer & Engineer Portfolio" />
+        <meta name="twitter:description" content="Explore the portfolio of Vishnu Sri Ranjan, a passionate Software Developer & Engineer. Check out my projects and get in touch!" />
         <meta name="twitter:image" content="/portfolio_thumb_twitter.jpg" />
       </Head>
       <div className={`${styles.page} ${inter.variable}`}>
@@ -215,11 +320,12 @@ export default function Home() {
             <section id="home" className={`${styles.sec1} d-flex align-center card`}>
               <div className="d-flex align-center flex-column mb-6">
                 <div>
-                  <div
+                  <div className="gradient-glow-1"
                     style={{
                       padding: "5px 12px",
-                      border: "1px solid silver",
+                      border: "2px solid #45c91e",
                       borderRadius: "8px",
+                      position: "relative"
                     }}
                   >
                     <p className={styles.status}>Available for work!</p>
@@ -238,7 +344,7 @@ export default function Home() {
               </div>
               <div className="mb-6">
                 <div className="d-flex">
-                  <div style={{ width: "150px", margin: "0 8px" }}>
+                  <div className="gradient-glow-2" style={{ width: "150px", margin: "0 8px", position: "relative" }}>
                     <Button
                       name="Send Email"
                       icon="/mail.svg"
@@ -246,7 +352,7 @@ export default function Home() {
                       alt="mail"
                     />
                   </div>
-                  <div style={{ width: "150px", margin: "0 8px" }}>
+                  <div className="gradient-glow-2" style={{ width: "150px", margin: "0 8px", position: "relative" }}>
                     <Button
                       name="Download CV"
                       icon="/download.svg"
@@ -524,7 +630,7 @@ export default function Home() {
                     <div className="border-top-style">
                       <HighlightCard
                         title="Holla at me!"
-                        description="Questions? Feedback? Or just wanna chat? Don't be shy — drop me a message, I'm always down to talk!"
+                        description="Questions? Feedback? Or just wanna chat? Don't be shy, drop me a message, I'm always down to talk!"
                         icon="/person.svg"
                       />
                     </div>
@@ -534,8 +640,9 @@ export default function Home() {
                           <div>
                             <input
                               placeholder="Full Name"
-                              name="fullName"
+                              name="name"
                               type="text"
+                              onChange={updateForm}
                             />
                           </div>
                           <div>
@@ -543,17 +650,19 @@ export default function Home() {
                               placeholder="Email"
                               type="text"
                               name="email"
+                              onChange={updateForm}
                             />
                           </div>
                           <div>
                             <textarea
                               placeholder="Message"
                               name="message"
+                              onChange={updateForm}
                             ></textarea>
                           </div>
                         </div>
                         <div>
-                          <Button name="Send Message" alt="send" />
+                          <Button name="Send Message" alt="send" click={contactSubmit} />
                         </div>
                       </form>
                     </div>
@@ -580,16 +689,6 @@ export default function Home() {
                         rel="noopener noreferrer"
                       >
                         <Icon path="./instagram.svg" size={30} />
-                      </a>
-                      <a
-                        href="https://facebook.com/vishnu.ranjan.94"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Icon path="./facebook.svg" size={30} />
-                      </a>
-                      <a href="" rel="noopener noreferrer">
-                        <Icon path="./telegram.svg" size={30} />
                       </a>
                       <Button
                         href="mailto:k0rj32ra5@mozmail.com"
