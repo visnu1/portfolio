@@ -9,7 +9,7 @@ interface ButtonProps {
     className?: string;
     compStyles?: React.CSSProperties;
     target?: HTMLAnchorElement["target"];
-    click?: any
+    click?: () => void
 }
 
 export const Button: React.FC<ButtonProps> = ({
