@@ -200,41 +200,42 @@ export default function Home() {
     const uuid = localStorage.getItem("visitorUUID") || crypto.randomUUID();
     localStorage.setItem("visitorUUID", uuid);
 
-    // const visited = localStorage.getItem("visitedMeta");
+    const visited = localStorage.getItem("visitedMeta");
 
-    // if (!visited) {
-    const fetchAndSendMetadata = async () => {
-      try {
-        const geo = await fetch("https://ipapi.co/json").then(res => res.json());
+    if (!visited) {
+      const fetchAndSendMetadata = async () => {
+        try {
+          const geo = await fetch("https://ipapi.co/json").then(res => res.json());
 
-        const metaPayload = {
-          uuid,
-          sheet: "user-meta-details",
-          ip: geo.ip,
-          city: geo.city,
-          region: geo.region,
-          country: geo.country_name,
-          postal: geo.postal,
-          latitude: geo.latitude,
-          longitude: geo.longitude,
-          userAgent: navigator.userAgent,
-          screenResolution: `${window.screen.width}x${window.screen.height}`,
-        };
+          const metaPayload = {
+            uuid,
+            sheet: "user-meta-details",
+            ip: geo.ip,
+            city: geo.city,
+            region: geo.region,
+            country: geo.country_name,
+            postal: geo.postal,
+            latitude: geo.latitude,
+            longitude: geo.longitude,
+            userAgent: navigator.userAgent,
+            screenResolution: `${window.screen.width}x${window.screen.height}`,
+          };
 
-        await fetch('https://script.google.com/macros/s/AKfycby3gkjdHMNqgus13fhRAWE8XUTG-QZplBKOtCU_R2XehlyzOHLEOZXLfnMQxGB-2kqc/exec', {
-          method: "POST",
-          // headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(metaPayload),
-        });
+          await fetch('https://script.google.com/macros/s/AKfycby3gkjdHMNqgus13fhRAWE8XUTG-QZplBKOtCU_R2XehlyzOHLEOZXLfnMQxGB-2kqc/exec', {
+            method: "POST",
+            mode: 'no-cors',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(metaPayload),
+          });
 
-        localStorage.setItem("visitedMeta", "true");
-      } catch (err) {
-        console.error("Meta data failed to send", err);
-      }
-    };
+          localStorage.setItem("visitedMeta", "true");
+        } catch (err) {
+          console.error("Meta data failed to send", err);
+        }
+      };
 
-    fetchAndSendMetadata();
-    // }
+      fetchAndSendMetadata();
+    }
   }, []);
 
 
@@ -256,13 +257,13 @@ export default function Home() {
     const payload = {
       ...form, uuid, sheet: 'contact-messages',
     };
-    // debugger
     try {
       const res = await fetch(
         'https://script.google.com/macros/s/AKfycby3gkjdHMNqgus13fhRAWE8XUTG-QZplBKOtCU_R2XehlyzOHLEOZXLfnMQxGB-2kqc/exec',
         {
           method: 'POST',
-          // headers: { "Content-Type": "application/json" },
+          mode: 'no-cors',
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         }
       );
